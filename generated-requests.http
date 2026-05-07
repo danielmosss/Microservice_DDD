@@ -1,0 +1,45 @@
+###
+POST http://localhost:8080/persons
+Content-Type: application/json
+
+{
+    "name": "Ally the Krokodil",
+    "email": "ally@krokodil.com"
+}
+
+<> 2026-05-07T091722.201.txt
+
+###
+POST http://localhost:8080/persons
+Content-Type: application/json
+
+{
+  "name": "Glowy Submarine",
+  "email": "glowy@krokodil.com"
+}
+
+<> 2026-05-07T091730.201.txt
+
+###
+GET http://localhost:8080/persons
+Content-Type: application/json
+
+<> 2026-05-07T091736.200.json
+
+###
+POST http://localhost:8080/relationships
+Content-Type: application/json
+
+{
+  "from_person_id": "bee97866-a5ed-4d92-a3e8-92b0888a140f",
+  "to_person_id": "b2b07214-ee18-438d-8c5c-96c2ce49e521",
+  "type": "Marriage"
+}
+
+###
+GET http://localhost:8080/relationships
+Content-Type: application/json
+
+<> 2026-05-07T092012.200.json
+<> 2026-05-07T091954.200.json
+<> 2026-05-07T091933.200.json
