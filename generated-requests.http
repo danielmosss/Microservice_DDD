@@ -10,6 +10,11 @@ Content-Type: application/json
 <> 2026-05-07T091722.201.txt
 
 ###
+@id = f66d1d00-d102-4d66-8e37-f2e28c804a68
+GET http://localhost:8080/person/{{id}}
+
+
+###
 POST http://localhost:8080/persons
 Content-Type: application/json
 

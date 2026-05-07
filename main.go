@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"net/http"
 	"sync"
 	"time"
@@ -43,6 +44,7 @@ func main() {
 	// Endpoints
 	mux.HandleFunc("POST /persons", createPerson)
 	mux.HandleFunc("GET /persons", getPersons)
+	mux.HandleFunc("GET /person/{id}", getPerson)
 	mux.HandleFunc("POST /relationships", createRelationship)
 	mux.HandleFunc("GET /relationships", getReplationships)
 
@@ -109,6 +111,24 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(persons)
+}
+
+func getPerson(w http.ResponseWriter, r *http.Request) {
+	personId := mux.Vars(r)["id"]
+
+	var _reqPerson Person
+	for _, p := range persons {
+		if p.ID == personId {
+			_reqPerson = p
+			break
+		}
+	}
+
+	if _reqPerson.ID == "" {
+		w.WriteHeader(http.StatusNotFound)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(_reqPerson)
 }
 
 type relationshipsStruct struct {
