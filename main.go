@@ -50,7 +50,7 @@ func main() {
 
 	// TODO: You need to implement GET /persons/{id}, DELETE /persons/{id}, etc.
 
-	fmt.Println("SocialGraphService running on :8080")
+	fmt.Println("Service running on :8080")
 	http.ListenAndServe(":8080", mux)
 }
 

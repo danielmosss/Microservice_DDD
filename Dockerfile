@@ -1,14 +1,14 @@
 # Build stage
-FROM golang:1.26-alpine AS builder
+FROM golang:1.26.2-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o microservice .
+RUN go build -o DDD_Microservice .
 
 # Run stage
 FROM alpine:latest
 WORKDIR /root/
-COPY --from=builder /app/microservice .
+COPY --from=builder /app .
 EXPOSE 8080
-CMD ["./microservice"]
+CMD ["./DDD_Microservice"]
