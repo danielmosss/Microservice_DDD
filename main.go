@@ -1,3 +1,11 @@
+// @title Social Graph API
+// @version 1.0
+// @description A microservice for managing social graph relationships between persons
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @license.name Apache 2.0
+// @host localhost:8080
+// @basePath /
 package main
 
 import (
@@ -5,6 +13,8 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/swaggo/http-swagger"
+	_ "DDD_Microservice/docs"
 	"net/http"
 	"sync"
 	"time"
@@ -48,12 +58,29 @@ func main() {
 	mux.HandleFunc("POST /relationships", createRelationship)
 	mux.HandleFunc("GET /relationships", getReplationships)
 
+	// Swagger UI endpoint
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/swagger/index.html", http.StatusSeeOther)
+	})
+	mux.HandleFunc("GET /swagger/", httpSwagger.WrapHandler)
+
 	// TODO: You need to implement GET /persons/{id}, DELETE /persons/{id}, etc.
 
 	fmt.Println("Service running on :8080")
+	fmt.Println("Swagger UI available at http://localhost:8080/swagger/")
 	http.ListenAndServe(":8080", mux)
 }
 
+// createPerson godoc
+// @Summary Create a new person
+// @Description Create a new person in the social graph
+// @Tags persons
+// @Accept json
+// @Produce json
+// @Param person body Person true "Person object"
+// @Success 201 {object} map[string]string{person_id=string}
+// @Failure 400 {string} string "Invalid request body"
+// @Router /persons [post]
 func createPerson(w http.ResponseWriter, r *http.Request) {
 	var p Person
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
@@ -79,6 +106,16 @@ func createPerson(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"person_id": p.ID})
 }
 
+// createRelationship godoc
+// @Summary Create a relationship between two persons
+// @Description Create a new relationship in the social graph
+// @Tags relationships
+// @Accept json
+// @Produce json
+// @Param relationship body Relationship true "Relationship object"
+// @Success 201 "Relationship created"
+// @Failure 400 {string} string "Invalid request body"
+// @Router /relationships [post]
 func createRelationship(w http.ResponseWriter, r *http.Request) {
 	var rel Relationship
 	if err := json.NewDecoder(r.Body).Decode(&rel); err != nil {
@@ -103,6 +140,13 @@ func createRelationship(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// getPersons godoc
+// @Summary Get all persons
+// @Description Get a list of all persons in the social graph
+// @Tags persons
+// @Produce json
+// @Success 200 {object} map[string]Person
+// @Router /persons [get]
 func getPersons(w http.ResponseWriter, r *http.Request) {
 	var _reqPersons []Person
 	for _, p := range persons {
@@ -113,6 +157,15 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(persons)
 }
 
+// getPerson godoc
+// @Summary Get a person by ID
+// @Description Get a specific person from the social graph
+// @Tags persons
+// @Produce json
+// @Param id path string true "Person ID"
+// @Success 200 {object} Person
+// @Failure 404 {string} string "Person not found"
+// @Router /person/{id} [get]
 func getPerson(w http.ResponseWriter, r *http.Request) {
 	personId := mux.Vars(r)["id"]
 
@@ -137,6 +190,13 @@ type relationshipsStruct struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// getReplationships godoc
+// @Summary Get all relationships
+// @Description Get a list of all relationships in the social graph
+// @Tags relationships
+// @Produce json
+// @Success 200 {array} relationshipsStruct
+// @Router /relationships [get]
 func getReplationships(w http.ResponseWriter, r *http.Request) {
 	var _reqRelationships []relationshipsStruct
 	for _, p := range relationships {
